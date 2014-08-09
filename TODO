@@ -1,0 +1,58 @@
+-*- org -*-
+
+* TODO [#B] ipv6 support
+  :LOGBOOK:
+  - Note taken on [2010-05-22 Sat 03:31] \\
+    code snippet from glguy:
+    
+    -- | 'withSocket' opens a socket on the given 'SockAddr',
+    -- executes the given continuation and then closes the socket.
+    withSocket :: AddrInfo -> (Socket -> M a) -> M a
+    withSocket addr = bracketM (openSocket addr) (io . sClose)
+    
+    -- |'openSocket' opens a new 'Socket' using the parameters specified in the
+    -- given 'AddrInfo'.
+    openSocket :: AddrInfo -> M Socket
+    openSocket addr = do
+       sock <- io $ socket (addrFamily addr) (addrSocketType addr) (addrProtocol addr)
+       io $ bindSocket sock (addrAddress addr)
+       name <- io $ getSocketName sock
+       debug $ "Listening on " ++ show name
+       return sock
+    
+    example = do
+      addrs <- io (getAddrInfo (Just defaultHints { addrSocketType = Datagrapm} ) host (port <|> Just default_service_name))
+      for_ addrs $ \ addr -> withSocket addr $ \ sock ->
+        return () -- do stuff with the socket here, synchronize with other threads
+                  -- via Control.Concurrent.*
+  :END:
+ 
+
+* TODO [#A] Remaining heist items
+  - [X] onLoad/pre/post hooks for template processing
+
+  - [X] implement <static> tag
+
+  - [ ] implement <cache> tag
+
+
+* TODO [#A] Finish HTTP server test suite
+
+
+* TODO [#B] Better benchmarks
+  :LOGBOOK:
+  - Note taken on [2010-04-13 Tue 02:50] \\
+    Ways to make the benchmarks better:
+    
+     - fine-grained microbenchmarks w/ criterion
+    
+     - track benchmark progress over time (using Hudson or the 'progression'
+       package)
+    
+     - more sophistication than just "PONG"
+    
+       - test performance for larger streams with/without compression, etc
+  :END:
+
+
+------------------------------------------------------------------------
