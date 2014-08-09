@@ -1,2 +1,4 @@
 dist
 site_key
+.cabal-sandbox/
+cabal.sandbox.config

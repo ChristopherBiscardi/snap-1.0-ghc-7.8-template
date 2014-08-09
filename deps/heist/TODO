@@ -1,8 +1,0 @@
-* Fix handling of ".." in apply tags
-
-Ongoing
--------
-
-* Improve test coverage
-* Head merging (ala the Lift Web Framework)
-
